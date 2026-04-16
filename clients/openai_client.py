@@ -1,14 +1,14 @@
 from openai import OpenAI
+
 from config.settings import settings
 
-class OpenAIClient():
-    """Create configured OpenAI client instances for application services."""
-    openai_api_key = settings.openai_api_key
+
+class OpenAIClientFactory:
+    """Factory for configured OpenAI client instances."""
 
     @staticmethod
-    def get_openai_api_key() -> OpenAI:
+    def create() -> OpenAI:
         if not settings.openai_api_key:
-            raise ValueError("Missing API key. Add OpenAI API key to .env")
-
+            raise ValueError("Missing OPENAI_API_KEY in environment.")
         return OpenAI(api_key=settings.openai_api_key)
 
