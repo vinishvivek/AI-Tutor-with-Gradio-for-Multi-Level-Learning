@@ -2,6 +2,11 @@ from config.settings import settings
 from main import create_app
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Launch the AI Tutor Gradio application."""
     app = create_app()
-    app.launch(server_name=settings.host, server_port=settings.port)
+    app.launch()
+
+
+if __name__ == "__main__":
+    main()
