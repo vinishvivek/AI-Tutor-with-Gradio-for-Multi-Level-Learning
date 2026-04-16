@@ -5,7 +5,6 @@ from collections.abc import Iterator
 import gradio as gr
 from pydantic import ValidationError
 
-from domain.enums import LearnerLevel
 from domain.models import TutorRequest
 from services.tutor_service import TutorService
 
@@ -18,17 +17,17 @@ class GradioTutorApp:
         self._service = TutorService()
 
     def _handle_submit(
-        self,
-        topic: str,
-        learner_level: str,
-        user_question: str,
+            self,
+            topic: str,
+            learner_level: int,
+            user_question: str,
     ) -> Iterator[str]:
         """
         Validate user input and stream the tutoring response.
 
         Args:
             topic: The learning topic entered by the user.
-            learner_level: The selected learner difficulty level.
+            learner_level: The selected explanation level from 1 to 5.
             user_question: The user's question.
 
         Yields:
@@ -52,13 +51,13 @@ class GradioTutorApp:
         try:
             request = TutorRequest(
                 topic=topic,
-                learner_level=LearnerLevel(learner_level),
+                learner_level=int(learner_level),
                 user_question=user_question,
             )
         except ValidationError:
             yield (
-                "Your input is invalid. Please keep the topic under 300 characters "
-                "and the question under 3000 characters."
+                "Your input is invalid. Please keep the topic under 300 characters, "
+                "the question under 3000 characters, and the level between 1 and 5."
             )
             return
 
@@ -75,17 +74,33 @@ class GradioTutorApp:
             gr.Markdown("# AI Tutor")
             gr.Markdown("Learn any topic at the level that suits you best.")
 
-            topic = gr.Textbox(label="Topic", placeholder="e.g. Neural Networks")
-            learner_level = gr.Dropdown(
-                choices=[level.value for level in LearnerLevel],
-                value=LearnerLevel.BEGINNER.value,
-                label="Learner Level",
+            topic = gr.Textbox(label="Topic", placeholder="e.g. Neural Networks", container=True)
+
+            gr.Markdown(
+                """
+            **Levels**
+            - **1** — 5 year old  
+            - **2** — College student  
+            - **3** — University student  
+            - **4** — PhD graduate  
+            - **5** — PhD Einstein-Level Mad Scientist
+            """
             )
+
+            learner_level = gr.Slider(
+                minimum=1,
+                maximum=5,
+                step=1,
+                value=2,
+                label="Explanation Level",
+            )
+
             user_question = gr.Textbox(
                 label="Your Question",
                 lines=5,
                 placeholder="Ask your question here...",
             )
+
             output = gr.Markdown(label="Tutor Response")
 
             submit_button = gr.Button("Explain")
