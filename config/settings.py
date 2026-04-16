@@ -1,7 +1,9 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
     """Settings for OpenAI API and Gradio Interface"""
+
     app_name: str = "AI Tutor"
     environment: str = "development"
     debug: bool = True
@@ -17,5 +19,6 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
+
 
 settings = Settings()

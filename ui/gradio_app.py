@@ -17,10 +17,10 @@ class GradioTutorApp:
         self._service = TutorService()
 
     def _handle_submit(
-            self,
-            topic: str,
-            learner_level: int,
-            user_question: str,
+        self,
+        topic: str,
+        learner_level: int,
+        user_question: str,
     ) -> Iterator[str]:
         """
         Validate user input and stream the tutoring response.
@@ -74,18 +74,18 @@ class GradioTutorApp:
             gr.Markdown("# AI Tutor")
             gr.Markdown("Learn any topic at the level that suits you best.")
 
-            topic = gr.Textbox(label="Topic", placeholder="e.g. Neural Networks", container=True)
+            topic = gr.Textbox(
+                label="Topic", placeholder="e.g. Neural Networks", container=True
+            )
 
-            gr.Markdown(
-                """
+            gr.Markdown("""
             **Levels**
             - **1** — 5 year old  
             - **2** — College student  
             - **3** — University student  
             - **4** — PhD graduate  
             - **5** — PhD Einstein-Level Mad Scientist
-            """
-            )
+            """)
 
             learner_level = gr.Slider(
                 minimum=1,
