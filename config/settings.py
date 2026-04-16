@@ -11,7 +11,6 @@ class Settings(BaseSettings):
     temperature: float = 0.3
 
     host: str = "0.0.0.0"
-    port: int = 7860
 
     model_config = SettingsConfigDict(
         env_file=".env",
