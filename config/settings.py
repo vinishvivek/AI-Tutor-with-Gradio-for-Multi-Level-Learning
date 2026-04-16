@@ -1,13 +1,22 @@
-import os
-from dataclasses import dataclass
-from dotenv import load_dotenv
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-load_dotenv()
+class Settings(BaseSettings):
+    app_name: str = "AI Tutor"
+    environment: str = "development"
+    debug: bool = True
 
-@dataclass(frozen=True)
-class Settings:
-    openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
-    llm_model: str | None = os.getenv("LLM_MODEL", "gpt-4o-mini")
+    openai_api_key: str
+    llm_model: str = "gpt-5.4-mini"
+    temperature: float = 0.3
+    max_tokens: int = 800
 
+    host: str = "0.0.0.0"
+    port: int = 7860
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
 settings = Settings()
