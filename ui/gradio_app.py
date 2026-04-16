@@ -71,7 +71,7 @@ class GradioTutorApp:
             A configured Gradio Blocks application.
         """
         with gr.Blocks(title="AI Tutor") as demo:
-            gr.Markdown("# AI Tutor")
+            gr.Markdown("# 📖 AI Tutor")
             gr.Markdown("Learn any topic at the level that suits you best.")
 
             topic = gr.Textbox(
