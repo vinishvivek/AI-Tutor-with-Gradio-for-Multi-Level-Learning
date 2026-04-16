@@ -1,39 +1,95 @@
-import gradio as gr
+from __future__ import annotations
 
-from app.domain.enums import LearnerLevel
-from app.domain.models import TutorRequest
-from app.services.tutor_service import TutorService
+from collections.abc import Iterator
+
+import gradio as gr
+from pydantic import ValidationError
+
+from domain.enums import LearnerLevel
+from domain.models import TutorRequest
+from services.tutor_service import TutorService
 
 
 class GradioTutorApp:
+    """Build and manage the Gradio user interface for the AI Tutor."""
+
     def __init__(self) -> None:
+        """Initialize the UI with the tutoring service."""
         self._service = TutorService()
 
-    def _handle_submit(self, topic: str, learner_level: str, user_question: str) -> str:
-        request = TutorRequest(
-            topic=topic,
-            learner_level=LearnerLevel(learner_level),
-            user_question=user_question,
-        )
-        response = self._service.generate_response(request)
-        return response.explanation
+    def _handle_submit(
+        self,
+        topic: str,
+        learner_level: str,
+        user_question: str,
+    ) -> Iterator[str]:
+        """
+        Validate user input and stream the tutoring response.
+
+        Args:
+            topic: The learning topic entered by the user.
+            learner_level: The selected learner difficulty level.
+            user_question: The user's question.
+
+        Yields:
+            Incrementally updated markdown response text.
+        """
+        topic = topic.strip()
+        user_question = user_question.strip()
+
+        if not topic and not user_question:
+            yield "Please enter both a topic and a question."
+            return
+
+        if not topic:
+            yield "Please enter a topic before submitting."
+            return
+
+        if not user_question:
+            yield "Please enter a question before submitting."
+            return
+
+        try:
+            request = TutorRequest(
+                topic=topic,
+                learner_level=LearnerLevel(learner_level),
+                user_question=user_question,
+            )
+        except ValidationError:
+            yield (
+                "Your input is invalid. Please keep the topic under 300 characters "
+                "and the question under 3000 characters."
+            )
+            return
+
+        yield from self._service.stream_response(request)
 
     def build(self) -> gr.Blocks:
+        """
+        Build and return the Gradio Blocks interface.
+
+        Returns:
+            A configured Gradio Blocks application.
+        """
         with gr.Blocks(title="AI Tutor") as demo:
             gr.Markdown("# AI Tutor")
-            gr.Markdown("Learn topics at the level that suits you best.")
+            gr.Markdown("Learn any topic at the level that suits you best.")
 
-            topic = gr.Textbox(label="Topic")
+            topic = gr.Textbox(label="Topic", placeholder="e.g. Neural Networks")
             learner_level = gr.Dropdown(
                 choices=[level.value for level in LearnerLevel],
-                label="Learner Level",
                 value=LearnerLevel.BEGINNER.value,
+                label="Learner Level",
             )
-            user_question = gr.Textbox(label="Your Question", lines=6)
-            output = gr.Textbox(label="Tutor Response", lines=14)
+            user_question = gr.Textbox(
+                label="Your Question",
+                lines=5,
+                placeholder="Ask your question here...",
+            )
+            output = gr.Markdown(label="Tutor Response")
 
-            submit_btn = gr.Button("Explain")
-            submit_btn.click(
+            submit_button = gr.Button("Explain")
+            submit_button.click(
                 fn=self._handle_submit,
                 inputs=[topic, learner_level, user_question],
                 outputs=output,
