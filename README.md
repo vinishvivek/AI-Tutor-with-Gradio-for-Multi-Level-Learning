@@ -19,7 +19,7 @@ This project demonstrates how to transform a simple LLM prototype into a **produ
 
 Learning complex topics is often:
 
-* Too generic (same explanation for everyone)
+* Too generic
 * Not adapted to the learner’s level
 * Either too simplified or overly complex
 
@@ -31,23 +31,34 @@ This project explores how AI can:
 
 ---
 
-## 🎚️ Demo
+## 🎥 Demo
 
 ### Input Interface
 
-* Enter topic + question
-* Select explanation level via slider
+Upload your topic, ask a question, and select the explanation level from 1 to 5.
 
-### Streaming Response
+![Input UI](assets/input_ui.png)
 
-* AI generates responses **token-by-token** with a streaming response
-* Output structured in markdown:
+### Explanation Level Slider
 
-```
-## Explanation
-## Example
-## Follow-up Question
-```
+The slider allows the same topic to be explained with very different levels of depth.
+
+![Level Slider](assets/level_slider.png)
+
+### Streaming Tutor Response
+
+Responses are streamed live into the UI for a more interactive tutoring experience.
+
+
+### Structured Output
+
+The tutor responds in markdown with:
+
+* Explanation
+* Example
+* Follow-up Question
+
+![Structured Output](assets/output_example.png)
 
 ---
 
@@ -57,7 +68,7 @@ The system is designed as a **layered AI pipeline**, ensuring separation of conc
 
 ### 🔄 Flow
 
-```
+```text
 User Input (UI)
    ↓
 Validation Layer
@@ -75,14 +86,14 @@ Token Stream → UI (Live Rendering)
 
 ## 🏗️ Project Structure
 
-```
-ai_tutor/
+```text
+AI-Tutor-with-Gradio-for-Multi-Level-Learning/
 ├── app/
 │   ├── main.py                 # App assembly
 │   ├── config/
 │   │   └── settings.py         # Environment config
 │   ├── clients/
-│   │   └── openai_client.py    # LLM gateway (stream + non-stream)
+│   │   └── openai_client.py    # LLM gateway
 │   ├── domain/
 │   │   └── models.py           # Request/response schemas
 │   ├── prompts/
@@ -94,8 +105,10 @@ ai_tutor/
 │   └── utils/
 │       └── logger.py           # Logging utility
 │
+├── assets/                     # Screenshots / demo GIFs
 ├── run.py                      # Entry point
-├── .env.example               # Environment variables template
+├── .env.example                # Environment variables template
+├── requirements.txt
 └── README.md
 ```
 
@@ -104,11 +117,11 @@ ai_tutor/
 ## ⚙️ Tech Stack
 
 * **Python**
-* **OpenAI (GPT-5.4-mini / GPT-4o family)**
-* **Gradio** (UI Layer)
-* **Pydantic** (Data validation)
-* **dotenv / pydantic-settings** (Configuration)
-* **httpx** (Underlying client)
+* **OpenAI Models**
+* **Gradio**
+* **Pydantic**
+* **pydantic-settings**
+* **httpx**
 
 ---
 
@@ -117,7 +130,10 @@ ai_tutor/
 * 🎚️ **Dynamic Learning Levels (1–5 Slider)**
 
   * 1 → 5-year-old explanation
-  * 5 → Einstein-level deep reasoning
+  * 2 → College student
+  * 3 → University student
+  * 4 → PhD graduate
+  * 5 → Einstein-level mad scientist
 
 * ⚡ **Streaming Responses**
 
@@ -133,15 +149,9 @@ ai_tutor/
 
 * 🧩 **Modular Architecture**
 
-  * UI, service, prompts, and client fully decoupled
+  * UI, prompts, service layer, and client separated cleanly
 
 * 🔒 **Input Validation**
-
-  * Clean user feedback for invalid inputs
-
-* 📊 **Extensible Design**
-
-  * Easy to plug in RAG, memory, or alternate LLM providers
 
 ---
 
@@ -153,8 +163,6 @@ ai_tutor/
 git clone https://github.com/vinishvivek/AI-Tutor-with-Gradio-for-Multi-Level-Learning.git
 cd AI-Tutor-with-Gradio-for-Multi-Level-Learning
 ```
-
----
 
 ### 2. Create environment
 
@@ -171,15 +179,11 @@ source venv/bin/activate   # Mac/Linux
 venv\Scripts\activate      # Windows
 ```
 
----
-
 ### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
-
----
 
 ### 4. Configure environment variables
 
@@ -190,8 +194,6 @@ OPENAI_API_KEY=your_api_key_here
 LLM_MODEL=gpt-5.4-mini
 ```
 
----
-
 ### 5. Run the app
 
 ```bash
@@ -200,7 +202,7 @@ python run.py
 
 Then open:
 
-```
+```text
 http://127.0.0.1:7860
 ```
 
@@ -209,35 +211,36 @@ http://127.0.0.1:7860
 ## ⚠️ Limitations
 
 * Output quality depends on prompt effectiveness
-* Streaming may vary slightly depending on model/provider
-* No conversation memory (single-turn interaction)
+* Streaming speed depends on the selected model and network conditions
+* No conversation memory yet
 * Responses are educational, not authoritative
 
 ---
 
 ## 🔧 Engineering Highlights
 
-This project focuses on **AI system design**, not just model usage:
+This project intentionally focuses on **AI system design**, not just raw model usage:
 
-* ✅ Streaming-first architecture
-* ✅ Clear separation of concerns
+* ✅ Streaming-first UX
 * ✅ Prompt engineering abstraction
-* ✅ Typed request/response modeling
+* ✅ Typed request validation
 * ✅ Service-layer orchestration
-* ✅ UI decoupled from business logic
-* ✅ Clean error handling and logging
+* ✅ UI decoupled from model logic
+* ✅ Config-driven setup
+* ✅ Clean modular structure for future expansion
 
 ---
 
 ## 🚀 Future Improvements
 
-* Multi-turn conversation memory
-* Quiz / assessment mode
-* RAG-based learning from documents
-* User personalization
-* Cost/token monitoring
-* Deployment (Docker / Hugging Face Spaces)
-* API layer (FastAPI backend)
+* Multi-turn memory
+* Quiz / challenge mode
+* RAG over custom documents
+* User progress tracking
+* Cost/token monitoring dashboard
+* FastAPI backend
+* Docker deployment
+* Hugging Face Spaces deployment
 
 ---
 
@@ -247,8 +250,8 @@ This project is not just about tutoring.
 
 It demonstrates how to:
 
-> Build a **modular, production-ready AI application** that delivers
-> real-time responses, structured outputs, and scalable architecture.
+> Build a **modular, production-oriented AI application**
+> with streaming outputs, adaptable prompting, and scalable architecture.
 
 ---
 
